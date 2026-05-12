@@ -1,0 +1,67 @@
+===============================================================================
+                برنامه جلسه کاری فردا شب (تاریخ: ____)
+                         پروژه BeautyAI
+================================================================================
+
+:white_check_mark: کارهایی که تا الان انجام شده:
+1. ایجاد ساختار پوشه‌بندی پروژه (mobile, backend, ai_training, infrastructure, docs)
+2. راه‌اندازی پروژه React Native با Expo (TypeScript)
+3. نصب کتابخانه‌های اولیه: expo-camera, expo-image-picker, axios, react-navigation
+4. راه‌اندازی بک‌اند FastAPI با یک API ساده (/process)
+5. ایجاد اتصال اولیه بین فرانت و بک‌اند (ارسال عکس و دریافت فیلتر خاکستری)
+6. نوشتن توافق‌نامه امنیتی ۶۰ روزه و پروپوزال فنی
+
+================================================================================
+:dart: هدف جلسه فردا شب (حداکثر ۲ ساعت):
+پیاده‌سازی اولین مدل هوش مصنوعی سبک برای تشخیص نوع پوست (چرب، خشک، معمولی)
+و جایگزین کردن فیلتر خاکستری با این مدل.
+
+================================================================================
+:memo: گام‌های دقیق برای فردا شب (به ترتیب):
+
+1. آماده‌سازی دیتاست (۱۰ دقیقه)
+   - دانلود دیتاست نمونه از Kaggle: "Face Skin Type Dataset"
+   - یا استفاده از ۵۰ تصویر شخصی (با رعایت حریم خصوصی)
+   - قرار دادن تصاویر در پوشه: ai_training/data/raw/skin/
+
+2. ایجاد نوت‌بوک آموزش در Google Colab (۴۰ دقیقه)
+   - فایل: ai_training/notebooks/02_train_skin_classifier.ipynb
+   - کد آماده (از قبل نوشته شده) شامل:
+     * لود کتابخانه‌ها (torch, torchvision, opencv)
+     * تعریف یک CNN ساده (۳ لایه کانولوشن)
+     * آموزش روی دیتاست با ۱۰ ایپاک
+     * ذخیره مدل نهایی (skin_model.pth)
+
+3. تبدیل مدل به ONNX (۱۰ دقیقه)
+   - اجرای اسکریپت: ai_training/scripts/export_onnx.py
+   - خروجی: skin_model.onnx (برای استنتاج سریع‌تر)
+
+4. جایگزینی مدل در بک‌اند FastAPI (۳۰ دقیقه)
+   - کپی فایل skin_model.onnx به backend/app/models/
+   - نوشتن تابع load_model() در backend/app/models/loader.py
+   - تغییر endpoint /process برای استفاده از مدل (ورودی: تصویر، خروجی: نوع پوست + درصد اطمینان)
+   - تست با Postman یا فرانت‌اند
+
+5. نمایش نتیجه در فرانت‌اند (۲۰ دقیقه)
+   - اضافه کردن یک متن در ResultScreen برای نمایش نوع پوست
+   - دریافت داده از پاسخ JSON و نمایش به کاربر
+
+6. Commit و Push به گیت (۱۰ دقیقه)
+   - git add .
+   - git commit -m "feat: add skin type classification model"
+   - git push origin main
+
+================================================================================
+:pushpin: منابع و کدهای آماده برای فردا:
+
+- کد کامل مدل CNN برای تشخیص پوست:
+  (در فایل جداگانه skin_classifier_model.py قرار داده می‌شود)
+
+- کد تبدیل به ONNX:
+  python -m tf2onnx.convert --saved-model ./model --output model.onnx
+
+- نمونه کد FastAPI برای لود ONNX:
+  `python
+  import onnxruntime as ort
+  session = ort.InferenceSession("model.onnx")
+  result = session.run(["output"], {"input": input_array})
