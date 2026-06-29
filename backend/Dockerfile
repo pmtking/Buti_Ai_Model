@@ -1,4 +1,14 @@
-FROM ubuntu:latest
-LABEL authors="Raman"
+FROM python:3.14.0 as buider
 
-ENTRYPOINT ["top", "-b"]
+WORKDIR /app
+
+#install
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    libpq \
+    && rm  -rf /var/lib/apt/lists/*
+
+#copy  on  dependency \
+COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
